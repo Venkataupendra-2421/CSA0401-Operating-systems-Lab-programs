@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+
+int main()
+{
+    int fd;
+    char data[100];
+
+    // Create a file using the system call "open"
+    fd = open("file.txt", O_CREAT | O_WRONLY, 0644);
+    if (fd == -1)
+    {
+        perror("Error opening file");
+        return 1;
+    }
+
+    // Read data from the user
+    printf("Enter data to be written to the file: ");
+    scanf("%s", data);
+
+    // Write the data to the file
+    write(fd, data, strlen(data));
+
+    // Close the file
+    close(fd);
+
+    // Reopen the file for reading
+    fd = open("file.txt", O_RDONLY);
+    if (fd == -1)
+    {
+        perror("Error opening file");
+        return 1;
+    }
+
+    // Read the data from the file
+    read(fd, data, 100);
+
+    // Print the data read from the file
+    printf("Data read from the file: %s\n", data);
+
+    // Close the file
+    close(fd);
+
+    return 0;
+}
