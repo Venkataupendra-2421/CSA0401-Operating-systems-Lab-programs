@@ -1,0 +1,42 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define NUM_BLOCKS 4
+#define NUM_PROCESSES 5
+
+int blocks[NUM_BLOCKS] = {40, 10, 30, 60};
+int processes[NUM_PROCESSES] = {100, 50, 30, 120, 35};
+
+void worst_fit(int blocks[], int processes[])
+{
+int i, j;
+for (i=0; i<NUM_PROCESSES; i++)
+{
+int max = -1;
+int idx;
+for (j=0; j<NUM_BLOCKS; j++)
+{
+if (blocks[j] >= processes[i] && blocks[j] > max)
+{
+max = blocks[j];
+idx = j;
+}
+}
+if (max != -1)
+{
+blocks[idx] -= processes[i];
+printf("Process %d allocated block %d\n", i+1, idx+1);
+}
+else
+{
+printf("Process %d not allocated\n", i+1);
+}
+}
+}
+
+int main()
+{
+printf("Worst-Fit Algorithm:\n");
+worst_fit(blocks, processes);
+return 0;
+}
