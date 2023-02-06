@@ -1,0 +1,97 @@
+#include <stdio.h>
+
+#define MAX_TRACKS 100
+
+void clook(int arr[], int head, int n)
+{
+    int seek_count = 0;
+    int i, j;
+    int diff;
+    int seek_sequence[MAX_TRACKS];
+    int temp;
+
+    // sort requests in ascending order
+    for (i = 0; i < n; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (arr[i] > arr[j])
+            {
+                temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+
+    // find index of head
+    int start = 0;
+    for (i = 0; i < n; i++)
+    {
+        if (arr[i] == head)
+        {
+            start = i;
+            break;
+        }
+    }
+
+    int left = start;
+    int right = n - 1;
+    for (i = 0; i < n; i++)
+    {
+        if (left == n - 1)
+            left = 0;
+        else if (right == 0)
+            right = n - 1;
+
+        if (head <= arr[right] && head >= arr[left])
+        {
+            if (arr[right] - head <= head - arr[left])
+            {
+                diff = arr[right] - head;
+                seek_count += diff;
+                seek_sequence[i] = arr[right];
+                right--;
+            }
+            else
+            {
+                diff = head - arr[left];
+                seek_count += diff;
+                seek_sequence[i] = arr[left];
+                left++;
+            }
+            head = seek_sequence[i];
+        }
+        else if (head < arr[right])
+        {
+            diff = arr[right] - head;
+            seek_count += diff;
+            seek_sequence[i] = arr[right];
+            right--;
+            head = seek_sequence[i];
+        }
+        else
+        {
+            diff = head - arr[left];
+            seek_count += diff;
+            seek_sequence[i] = arr[left];
+            left++;
+            head = seek_sequence[i];
+        }
+    }
+
+    printf("Total head movement: %d\n", seek_count);
+    printf("Average head movement: %f\n", (float)seek_count / n);
+    printf("Seek Sequence: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", seek_sequence[i]);
+}
+
+int main()
+{
+    int n = 5;
+    int arr[5] = {55, 58, 60, 70, 18};
+    int head = 55;
+    clook(arr, head, n);
+    return 0;
+}
