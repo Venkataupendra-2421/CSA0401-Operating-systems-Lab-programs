@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_PAGE_FRAMES 3
+
+int page_reference_sequence[] = {4, 1, 2, 4, 3, 2, 1, 5};
+int page_frames[MAX_PAGE_FRAMES];
+int page_faults = 0;
+int num_pages = sizeof(page_reference_sequence) / sizeof(int);
+
+bool page_exists_in_frames(int page) {
+    for (int i = 0; i < MAX_PAGE_FRAMES; i++) {
+        if (page_frames[i] == page) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int get_page_to_replace(int current_page) {
+    int page_to_replace = -1;
+    int max_future_time = -1;
+    for (int i = 0; i < MAX_PAGE_FRAMES; i++) {
+        int j;
+        for (j = current_page + 1; j < num_pages; j++) {
+            if (page_frames[i] == page_reference_sequence[j]) {
+                break;
+            }
+        }
+        if (j > max_future_time) {
+            max_future_time = j;
+            page_to_replace = i;
+        }
+    }
+    return page_to_replace;
+}
+
+void insert_page(int page) {
+    if (!page_exists_in_frames(page)) {
+        if (page_faults < MAX_PAGE_FRAMES) {
+            page_frames[page_faults] = page;
+            page_faults++;
+        } else {
+            int page_to_replace = get_page_to_replace(page);
+            page_frames[page_to_replace] = page;
+        }
+    }
+}
+
+int main() {
+    for (int i = 0; i < num_pages; i++) {
+        insert_page(page_reference_sequence[i]);
+    }
+    printf("Number of page faults: %d\n", page_faults);
+    return 0;
+}
